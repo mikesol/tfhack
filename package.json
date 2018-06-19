@@ -1,0 +1,22 @@
+{
+  "name": "@meeshkanml/tfhack",
+  "version": "0.0.0",
+  "description": "A giant tf hack - please forgive us",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikesol/tfhack.git"
+  },
+  "keywords": [
+    "ugly"
+  ],
+  "author": "Mike Solomon and Kimmo Sääskilahti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikesol/tfhack/issues"
+  },
+  "homepage": "https://github.com/mikesol/tfhack#readme"
+}
