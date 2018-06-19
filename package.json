@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^0.1.7",
+    "lodash": "^4.17.10",
     "vue": "^2.5.11"
   },
   "browserslist": [
@@ -31,6 +32,7 @@
     "not ie <= 8"
   ],
   "devDependencies": {
+    "@tensorflow/tfjs": "^0.11.6",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
     "babel-loader": "^7.1.2",
