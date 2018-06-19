@@ -1,13 +1,18 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <h1>{{ msg }} {{ counter }}</h1>
-    <h2>Functions can be invoked: {{ counterFromFunction() }}</h2>
-    <h3>Computed properties: {{ counterFromComputed }}</h3>
+    <div v-if="tfProgress.epochs !== 0">
+      <h1>Epoch: {{ tfProgress.epochs }}, loss {{ tfProgress.loss.toFixed(2) }}</h1>
+    </div>
+    <div v-if="tfProgress.epochs === 0">
+      <h1>Waiting for data...</h1>
+    </div>
+
   </div>
 </template>
 
 <script>
+
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 
@@ -40,33 +45,15 @@ ys.print();
 //  model.predict(tf.tensor2d([5], [1, 1])).print();
 //});
 
-model.fit(xs, ys, {
-    epochs: 100,
-    callbacks: {
-      onEpochEnd: async (epoch, log) => {
-        console.log(`Epoch ${epoch}: loss = ${log.loss}`);
-      }
-    }
-  });
+let tfProgress = { epochs: 0, loss: NaN };
 
-function* generator() {
-  let index = 0;
-  while(true) {
-    yield index++;
-  }
-}
-
-const gen = generator();
-
-let counter = 0;
-
-//let msg = 'This comes from Vue';
 export default {
   name: 'app',
   data () {
     return {
       msg: 'Counter is at value:',
-      counter
+      tfProgress: { epochs: 0, loss: NaN },
+      toBeCanceled: undefined
     }
   },
   methods: {
@@ -79,11 +66,25 @@ export default {
       return this.counter;
     }
   },
-  created() {
-    setInterval(() => {
-      this.counter = gen.next().value;
-    }, 1000);
-},
+  mounted() {
+    this.toBeCanceled = setInterval(() => {
+      model.fit(xs, ys, {
+        epochs: 1,
+        callbacks: {
+          onEpochEnd: async (epoch, log) => {
+            this.tfProgress.epochs = this.tfProgress.epochs + 1;
+            this.tfProgress.loss = log.loss;
+          }
+        }
+      });
+    }, 2000);
+  },
+  destroyed() {
+    if (this.toBeCanceled) {
+      clearInterval(this.toBeCanceled);
+    }
+
+  }
 }
 </script>
 
