@@ -7,7 +7,6 @@
     <div v-if="tfProgress.epochs === 0">
       <h1>Waiting for data...</h1>
     </div>
-
   </div>
 </template>
 
@@ -47,27 +46,17 @@ ys.print();
 
 let tfProgress = { epochs: 0, loss: NaN };
 
+let toBeCanceled = undefined;
+
 export default {
   name: 'app',
   data () {
     return {
-      msg: 'Counter is at value:',
       tfProgress: { epochs: 0, loss: NaN },
-      toBeCanceled: undefined
-    }
-  },
-  methods: {
-    counterFromFunction: function () {
-      return this.counter;
-    }
-  },
-  computed: {
-    counterFromComputed: function () {
-      return this.counter;
     }
   },
   mounted() {
-    this.toBeCanceled = setInterval(() => {
+    toBeCanceled = setInterval(() => {
       model.fit(xs, ys, {
         epochs: 1,
         callbacks: {
@@ -80,10 +69,9 @@ export default {
     }, 2000);
   },
   destroyed() {
-    if (this.toBeCanceled) {
-      clearInterval(this.toBeCanceled);
+    if (toBeCanceled) {
+      clearInterval(toBeCanceled);
     }
-
   }
 }
 </script>
