@@ -47,6 +47,8 @@ model.fit(xs, ys, {
         console.log(`Epoch ${epoch}: loss = ${log.loss}`);
       }
     }
+  }).then( () => {
+    model.predict(tf.randomNormal([1, 10])).print();
   });
 
 function* generator() {
