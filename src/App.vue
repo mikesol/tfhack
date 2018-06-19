@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <h1>TensorFlow training</h1>
     <div v-if="tfProgress.epochs !== 0">
-      <h1>Epoch: {{ tfProgress.epochs }}, loss {{ tfProgress.loss.toFixed(2) }}</h1>
+      <h2>Epoch: {{ tfProgress.epochs }}, loss {{ tfProgress.loss.toFixed(3) }}</h2>
     </div>
     <div v-if="tfProgress.epochs === 0">
-      <h1>Waiting for data...</h1>
+      <h2>Waiting for data...</h2>
     </div>
   </div>
 </template>
@@ -44,8 +44,6 @@ ys.print();
 //  model.predict(tf.tensor2d([5], [1, 1])).print();
 //});
 
-let tfProgress = { epochs: 0, loss: NaN };
-
 let toBeCanceled = undefined;
 
 export default {
@@ -55,18 +53,18 @@ export default {
       tfProgress: { epochs: 0, loss: NaN },
     }
   },
-  mounted() {
+  created() {
     toBeCanceled = setInterval(() => {
       model.fit(xs, ys, {
         epochs: 1,
         callbacks: {
-          onEpochEnd: async (epoch, log) => {
+          onEpochEnd: (epoch, log) => {
             this.tfProgress.epochs = this.tfProgress.epochs + 1;
             this.tfProgress.loss = log.loss;
           }
         }
       });
-    }, 2000);
+    }, 1000);
   },
   destroyed() {
     if (toBeCanceled) {
