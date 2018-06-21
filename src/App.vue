@@ -44,7 +44,9 @@ ys.print();
 //  model.predict(tf.tensor2d([5], [1, 1])).print();
 //});
 
-let toBeCanceled = undefined;
+const MAX_EPOCHS = 100;
+
+let timeout = undefined;
 
 export default {
   name: 'app',
@@ -53,23 +55,31 @@ export default {
       tfProgress: { epochs: 0, loss: NaN },
     }
   },
-  created() {
-    toBeCanceled = setInterval(() => {
-      model.fit(xs, ys, {
+  methods: {
+    trainEpochAndUpdate: async function () {
+      const hist = await model.fit(xs, ys, {
         epochs: 1,
-        callbacks: {
-          onEpochEnd: (epoch, log) => {
-            this.tfProgress.epochs = this.tfProgress.epochs + 1;
-            this.tfProgress.loss = log.loss;
-          }
-        }
       });
-    }, 1000);
+      this.tfProgress.epochs = this.tfProgress.epochs + 1;
+      this.tfProgress.loss = hist.history.loss[0];
+    },
+    trainingLoop: async function () {
+
+      await this.trainEpochAndUpdate();
+
+      if (this.tfProgress.epochs < MAX_EPOCHS) {
+        // Hackish way to let Vue update the view
+        timeout = setTimeout(() => {
+          this.trainingLoop();
+        }, 0);
+      }
+    }
+  },
+  created() {
+    this.trainingLoop();
   },
   destroyed() {
-    if (toBeCanceled) {
-      clearInterval(toBeCanceled);
-    }
+    clearTimeout(timeout);
   }
 }
 </script>
